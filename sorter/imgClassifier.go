@@ -56,8 +56,6 @@ func imgSearcher(fp string) ([]string, error) {
 		if strings.Contains(img, ".zip") {
 
 			newDir := filepath.Join(filepath.Dir(fp), "/", "unzippedBySorter")
-			fmt.Println(newDir)
-
 			errCreate := os.MkdirAll(newDir, os.ModePerm)
 			if errCreate != nil {
 				log.Fatalln(errCreate)
@@ -108,7 +106,7 @@ func classifier(imgF cells.ImgFolder) error {
 				return fmt.Errorf("file rename was failed: %w", err)
 			}
 		} else {
-			createErr := os.MkdirAll(dirPath, 775)
+			createErr := os.MkdirAll(dirPath, os.ModePerm)
 			if createErr != nil {
 				return fmt.Errorf("failed to create the directory : %w", createErr)
 			}
