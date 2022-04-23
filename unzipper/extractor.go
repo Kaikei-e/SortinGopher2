@@ -1,31 +1,36 @@
 package unzipper
 
 import (
+	"SortinGopher2/cells"
 	"fmt"
 	"io/fs"
 	"path/filepath"
 )
 
-func Extractor(ps []string) ([][]string, error) {
-	var zipPaths [][]string
+func Extractor(ps []string) ([]cells.ZipFolder, error) {
+	var zfs []cells.ZipFolder
 
 	for _, p := range ps {
+		var zf cells.ZipFolder
 		z, err := zipSearcher(p)
 		if err != nil {
 			return nil, fmt.Errorf("zip searching was failed by: %w", err)
 		}
 
-		zipPaths = append(zipPaths, z)
+		zf.FolderPath = p
+		zf.Zips = z
+
+		zfs = append(zfs, zf)
 
 	}
 
-	return zipPaths, nil
+	return zfs, nil
 }
 
 func zipSearcher(folderPath string) ([]string, error) {
 	var zipFiles []string
 
-	fmt.Printf("search will start at %v", folderPath)
+	fmt.Println("search will start at :", folderPath)
 
 	err := filepath.WalkDir(folderPath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -48,4 +53,8 @@ func zipSearcher(folderPath string) ([]string, error) {
 	}
 
 	return zipFiles, nil
+}
+
+func extractor() {
+
 }
