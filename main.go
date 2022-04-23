@@ -29,10 +29,8 @@ func main() {
 	var paths []string
 
 	for _, arg := range args {
-		//p := path.Clean(arg)
-		//if path.IsAbs(arg) {
 		paths = append(paths, arg)
-		//}
+
 	}
 
 	fmt.Println(paths)

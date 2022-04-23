@@ -4,6 +4,7 @@ import (
 	"SortinGopher2/cells"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -51,6 +52,30 @@ func imgSearcher(fp string) ([]string, error) {
 	var imgList []string
 	for _, fileInfo := range dir {
 		img := fileInfo.Name()
+
+		if strings.Contains(img, ".zip") {
+
+			newDir := filepath.Join(filepath.Dir(fp), "/", "unzippedBySorter")
+			fmt.Println(newDir)
+
+			errCreate := os.MkdirAll(newDir, os.ModePerm)
+			if errCreate != nil {
+				log.Fatalln(errCreate)
+				return nil, fmt.Errorf("failed to create directory ... : %w", errCreate)
+			}
+
+			fmt.Println("zip file moved from:")
+			fmt.Println(filepath.Join(fp + "/" + img))
+
+			fmt.Println("zip file moved to:")
+			fmt.Println(filepath.Join(newDir, "/"+img))
+			renameErr := os.Rename(filepath.Join(fp+"/"+img), filepath.Join(newDir, "/"+img))
+			if renameErr != nil {
+				return nil, renameErr
+			}
+
+			continue
+		}
 
 		imgList = append(imgList, img)
 	}

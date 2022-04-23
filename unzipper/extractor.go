@@ -87,14 +87,7 @@ func extractor(zf cells.ZipFolder) error {
 		for i, img := range reader.File {
 
 			if img.FileInfo().IsDir() {
-
 				continue
-				//ph := filepath.Join(zf.FolderPath, "/", img.Name)
-				//
-				//err := os.MkdirAll(ph, 766)
-				//if err != nil && !os.IsExist(err) {
-				//	return fmt.Errorf("failed to make dir : %w", err)
-				//}
 			} else {
 				buf := make([]byte, img.UncompressedSize64)
 				raw, err := img.OpenRaw()
@@ -132,7 +125,6 @@ func extractor(zf cells.ZipFolder) error {
 			}
 
 		}
-
 		readErr := reader.Close()
 		if readErr != nil {
 			return fmt.Errorf("reader closing failed : %w", readErr)
