@@ -6,7 +6,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path"
 	"strings"
 	"sync"
 )
@@ -16,27 +15,31 @@ func main() {
 
 	var sc = bufio.NewScanner(os.Stdin)
 
+	sc.Split(bufio.ScanWords)
 	sc.Scan()
 
 	inputs := sc.Text()
+	fmt.Println(inputs)
+
 	args := strings.Split(inputs, " ")
+
+	fmt.Println("Args: ")
+	fmt.Println(args)
 
 	var paths []string
 
 	for _, arg := range args {
-		p := path.Clean(arg)
-		if path.IsAbs(p) {
-			paths = append(paths, p)
-		}
+		//p := path.Clean(arg)
+		//if path.IsAbs(arg) {
+		paths = append(paths, arg)
+		//}
 	}
 
+	fmt.Println(paths)
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	err := unzipper.Extractor(paths, &wg)
-	if err != nil {
-		fmt.Errorf("zip extract was failed by : %w", err)
-	}
+	go unzipper.Extractor(paths, &wg)
 
 	wg.Wait()
 

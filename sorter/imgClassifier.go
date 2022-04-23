@@ -59,13 +59,20 @@ func imgSearcher(fp string) ([]string, error) {
 }
 
 func classifier(imgF cells.ImgFolder) error {
-	fmt.Println(imgF.FolderPath)
+	fmt.Println("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
+	fmt.Println(imgF.ImgPaths)
 
 	for i, ph := range imgF.ImgPaths {
+		if !strings.Contains(ph, ".") {
+			continue
+		}
+
+		fmt.Println(ph)
+		p := filepath.Clean(ph)
+		fmt.Println(p)
+		e := filepath.Ext(p)
 		s := strings.Split(ph, "-")
 		t := time.Now().Nanosecond()
-		p := filepath.Clean(ph)
-		e := filepath.Ext(p)
 
 		dirName := s[0]
 		dirPath := filepath.Join(imgF.FolderPath, "/", dirName)
@@ -77,7 +84,7 @@ func classifier(imgF cells.ImgFolder) error {
 		if os.IsExist(err) {
 			fmt.Println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 
-			err := os.Rename(p, filepath.Join(dirPath, "/", dirName, "_", strconv.Itoa(t), "_", strconv.Itoa(i), e))
+			err := os.Rename(ph, filepath.Join(dirPath, "/", dirName, "_", strconv.Itoa(t), "_", strconv.Itoa(i), e))
 			if err != nil {
 				return fmt.Errorf("file rename was failed: %w", err)
 			}
@@ -89,7 +96,9 @@ func classifier(imgF cells.ImgFolder) error {
 				return fmt.Errorf("failed to create the directory : %w", createErr)
 			}
 
-			err := os.Rename(p, filepath.Join(dirPath, "/", dirName, "_", strconv.Itoa(t), "_", strconv.Itoa(i), e))
+			fmt.Println(ph)
+			fmt.Println(filepath.Join(dirPath, "/"+dirName+"_"+strconv.Itoa(t)+"_"+strconv.Itoa(i)+e))
+			err := os.Rename(ph, filepath.Join(dirPath, "/"+dirName+"_"+strconv.Itoa(t)+"_"+strconv.Itoa(i)+e))
 			if err != nil {
 				return fmt.Errorf("file rename was failed: %w", err)
 			}

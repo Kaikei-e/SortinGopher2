@@ -14,8 +14,11 @@ import (
 	"time"
 )
 
-func Extractor(ps []string, wg *sync.WaitGroup) error {
+func Extractor(ps []string, wg *sync.WaitGroup) {
 	defer wg.Done()
+
+	fmt.Println("Extracting proccess was started")
+	fmt.Println("Paths are :")
 
 	var zfs []cells.ZipFolder
 
@@ -23,7 +26,7 @@ func Extractor(ps []string, wg *sync.WaitGroup) error {
 		var zf cells.ZipFolder
 		z, err := zipSearcher(p)
 		if err != nil {
-			return fmt.Errorf("zip searching was failed by: %w", err)
+			fmt.Errorf("zip searching was failed by: %w", err)
 		}
 
 		zf.FolderPath = p
@@ -36,11 +39,10 @@ func Extractor(ps []string, wg *sync.WaitGroup) error {
 	for _, zf := range zfs {
 		err := extractor(zf)
 		if err != nil {
-			return fmt.Errorf("zip extracting was failed by: %w", err)
+			fmt.Errorf("zip extracting was failed by: %w", err)
 		}
 	}
 
-	return nil
 }
 
 func zipSearcher(folderPath string) ([]string, error) {
