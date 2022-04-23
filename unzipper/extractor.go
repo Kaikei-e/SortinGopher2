@@ -88,7 +88,6 @@ func extractor(zf cells.ZipFolder) error {
 
 			if img.FileInfo().IsDir() {
 
-				fmt.Println("ooooooooooooooooo")
 				continue
 				//ph := filepath.Join(zf.FolderPath, "/", img.Name)
 				//
