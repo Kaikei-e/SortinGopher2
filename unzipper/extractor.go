@@ -2,8 +2,11 @@ package unzipper
 
 import (
 	"SortinGopher2/cells"
+	"archive/zip"
 	"fmt"
+	"io"
 	"io/fs"
+	"os"
 	"path/filepath"
 )
 
@@ -22,6 +25,10 @@ func Extractor(ps []string) ([]cells.ZipFolder, error) {
 
 		zfs = append(zfs, zf)
 
+	}
+
+	for _, zf := range zfs {
+		extractor(zf)
 	}
 
 	return zfs, nil
@@ -55,6 +62,68 @@ func zipSearcher(folderPath string) ([]string, error) {
 	return zipFiles, nil
 }
 
-func extractor() {
+func extractor(zf cells.ZipFolder) error {
+	fmt.Println("Extracting is started")
+
+	for _, p := range zf.Zips {
+		fmt.Println(p)
+
+		reader, err := zip.OpenReader(p)
+		if err != nil {
+			return err
+		}
+
+		for _, img := range reader.File {
+
+			if img.FileInfo().IsDir() {
+				ph := filepath.Join(zf.FolderPath, "/", img.Name)
+
+				err := os.MkdirAll(ph, img.Mode())
+				if err != nil && !os.IsExist(err) {
+					return fmt.Errorf("failed to make dir : %w", err)
+				}
+			} else {
+				buf := make([]byte, img.UncompressedSize64)
+				raw, err := img.OpenRaw()
+				if err != nil {
+					return fmt.Errorf("failed to open the img file : %w", err)
+				}
+
+				_, readErr := io.ReadFull(raw, buf)
+				if readErr != nil {
+					return fmt.Errorf("failed to open the img file : %w", readErr)
+				}
+
+				path := filepath.Join(zf.FolderPath, "/", img.Name)
+				out, createErr := os.Create(path)
+				if createErr != nil {
+					return fmt.Errorf("failed to open the img file : %w", createErr)
+
+				}
+
+				writeErr := os.WriteFile(path, buf, img.Mode())
+				if writeErr != nil {
+					return fmt.Errorf("failed to write file : %w", writeErr)
+				}
+
+				closeErr := out.Close()
+				if closeErr != nil {
+					return fmt.Errorf("failed to close file : %w", closeErr)
+				}
+
+			}
+
+		}
+
+		readErr := reader.Close()
+		if readErr != nil {
+			return fmt.Errorf("reader closing failed : %w", readErr)
+		}
+
+	}
+
+	fmt.Println("Extracted the zip.")
+
+	return nil
 
 }

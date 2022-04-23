@@ -28,10 +28,10 @@ func main() {
 		}
 	}
 
-	exts, err := unzipper.Extractor(paths)
+	_, err := unzipper.Extractor(paths)
 	if err != nil {
 		fmt.Errorf("zip extract was failed by : %w", err)
 	}
 
-	fmt.Println(exts)
+	//fmt.Println(exts)
 }
