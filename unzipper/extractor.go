@@ -10,17 +10,20 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
-func Extractor(ps []string) ([]cells.ZipFolder, error) {
+func Extractor(ps []string, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	var zfs []cells.ZipFolder
 
 	for _, p := range ps {
 		var zf cells.ZipFolder
 		z, err := zipSearcher(p)
 		if err != nil {
-			return nil, fmt.Errorf("zip searching was failed by: %w", err)
+			return fmt.Errorf("zip searching was failed by: %w", err)
 		}
 
 		zf.FolderPath = p
@@ -33,11 +36,11 @@ func Extractor(ps []string) ([]cells.ZipFolder, error) {
 	for _, zf := range zfs {
 		err := extractor(zf)
 		if err != nil {
-			return nil, fmt.Errorf("zip extracting was failed by: %w", err)
+			return fmt.Errorf("zip extracting was failed by: %w", err)
 		}
 	}
 
-	return zfs, nil
+	return nil
 }
 
 func zipSearcher(folderPath string) ([]string, error) {

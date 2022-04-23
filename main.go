@@ -1,12 +1,14 @@
 package main
 
 import (
+	"SortinGopher2/sorter"
 	"SortinGopher2/unzipper"
 	"bufio"
 	"fmt"
 	"os"
 	"path"
 	"strings"
+	"sync"
 )
 
 func main() {
@@ -28,10 +30,24 @@ func main() {
 		}
 	}
 
-	_, err := unzipper.Extractor(paths)
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	err := unzipper.Extractor(paths, &wg)
 	if err != nil {
 		fmt.Errorf("zip extract was failed by : %w", err)
 	}
+
+	wg.Wait()
+
+	wg.Add(1)
+
+	cErr := sorter.ImgClassifier(paths, &wg)
+	if cErr != nil {
+		fmt.Errorf("classifying was failed : %w", cErr)
+	}
+
+	wg.Wait()
 
 	//fmt.Println(exts)
 }
