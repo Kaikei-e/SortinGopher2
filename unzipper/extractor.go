@@ -8,6 +8,9 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func Extractor(ps []string) ([]cells.ZipFolder, error) {
@@ -28,7 +31,10 @@ func Extractor(ps []string) ([]cells.ZipFolder, error) {
 	}
 
 	for _, zf := range zfs {
-		extractor(zf)
+		err := extractor(zf)
+		if err != nil {
+			return nil, fmt.Errorf("zip extracting was failed by: %w", err)
+		}
 	}
 
 	return zfs, nil
@@ -73,7 +79,7 @@ func extractor(zf cells.ZipFolder) error {
 			return err
 		}
 
-		for _, img := range reader.File {
+		for i, img := range reader.File {
 
 			if img.FileInfo().IsDir() {
 				ph := filepath.Join(zf.FolderPath, "/", img.Name)
@@ -94,7 +100,12 @@ func extractor(zf cells.ZipFolder) error {
 					return fmt.Errorf("failed to open the img file : %w", readErr)
 				}
 
-				path := filepath.Join(zf.FolderPath, "/", img.Name)
+				t := time.Now().Nanosecond()
+
+				strs := strings.Split(img.Name, "-")
+				imgName := strs[0] + "-" + strconv.Itoa(i) + strconv.Itoa(t) + filepath.Ext(img.Name)
+
+				path := filepath.Join(zf.FolderPath, "/", imgName)
 				out, createErr := os.Create(path)
 				if createErr != nil {
 					return fmt.Errorf("failed to open the img file : %w", createErr)
