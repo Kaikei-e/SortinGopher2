@@ -2,15 +2,23 @@ package main
 
 import (
 	"SortinGopher2/unzipper"
+	"bufio"
 	"fmt"
 	"os"
 	"path"
+	"strings"
 )
 
 func main() {
 	fmt.Println("Please enter the path where the zip file is located ... ")
 
-	args := os.Args
+	var sc = bufio.NewScanner(os.Stdin)
+
+	sc.Scan()
+
+	inputs := sc.Text()
+	args := strings.Split(inputs, " ")
+
 	var paths []string
 
 	for _, arg := range args {
