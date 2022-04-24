@@ -9,7 +9,7 @@ The program extracts downloaded Zip files in the format of [Twitter media downlo
 
 1: Enter the path to the folder containing the zip file you want to extract.
 
-2: Click on the button that says "Perform ZIP..." below.
+2: Just return.
 
 <br>
 
