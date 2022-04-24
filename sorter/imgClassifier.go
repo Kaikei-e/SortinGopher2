@@ -58,8 +58,8 @@ func imgSearcher(fp string) ([]string, error) {
 			newDir := filepath.Join(filepath.Dir(fp), "/", "unzippedBySorter")
 			errCreate := os.MkdirAll(newDir, os.ModePerm)
 			if errCreate != nil {
+				fmt.Errorf("failed to create directory ... : %w", errCreate)
 				log.Fatalln(errCreate)
-				return nil, fmt.Errorf("failed to create directory ... : %w", errCreate)
 			}
 
 			fmt.Println("zip file moved from:")
